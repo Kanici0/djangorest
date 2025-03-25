@@ -6,8 +6,12 @@ class AbstractNameModel(models.Model):
         abstract = True
 
     name = models.CharField(max_length=255)
+    text = models.TextField()
+    price = models.FloatField()
+    is_active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return self.name
@@ -23,7 +27,8 @@ class Tag(AbstractNameModel):
 
 
 class Director(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
+    movies = models.ManyToManyField('Movie', related_name='directors')
 
     def __str__(self):
         return self.name
@@ -42,6 +47,17 @@ class Movie(models.Model):
 class Review(models.Model):
     star_choices = (
         (i, '* ' * i) for i in range(1, 6)
+    )
+    text = models.TextField()
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews')
+    stars = models.IntegerField(choices=star_choices, default=1, null=True)
+
+    def __str__(self):
+        return self.text
+
+class Review(models.Model):
+    star_choices =(
+    (i,'* ' * i) for i in range(1, 6)
     )
     text = models.TextField()
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews')
